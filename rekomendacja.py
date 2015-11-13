@@ -1,5 +1,6 @@
-﻿#  W    zorowane na przykładzie Rona Zacharskiego
-
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+#  Wzorowane na przykladzie Rona Zacharskiego
 
 from math import sqrt
 
@@ -16,33 +17,59 @@ users = {"Ania": {"Blues Traveler": 3.5, "Broken Bells": 2.0, "Norah Jones": 4.5
 
 
 def manhattan(rating1, rating2):
-    """Oblicz odległość w metryce taksówkowej między dwoma  zbiorami ocen
+    """Oblicz odleglosc w metryce taksowkowej miedzy dwoma zbiorami ocen
        danymi w postaci: {'The Strokes': 3.0, 'Slightly Stoopid': 2.5}
-       Zwróć -1, gdy zbiory nie mają wspólnych elementów"""
-       
-    # TODO: wpisz kod
-    pass
+       Zwraca -1, gdy zbiory nie maja wspolnych elementow"""
+    klucze1 = rating1.keys()
+    klucze2 = rating2.keys()
+    odleglosc = 0
+    udaloSiePorownac = False
+    
+    for klucz in klucze1 :
+        if klucz in rating2.keys():
+            udaloSiePorownac = True
+            odleglosc = odleglosc + abs(rating2[klucz] - rating1[klucz]) 
 
+    if udaloSiePorownac:
+        return odleglosc
+    else:
+        return -1
 
-def computeNearestNeighbor(username, users):
-    """dla danego użytkownika username, zwróć ze słownika users nazwę użytkownika o najbliższych preferencjach"""
-    nameOfNearestNeighbor = ""
-    distances = []
-    # TODO: wpisz kod
-    return nameOfNearestNeighbor
+def testManhattan(rating1, rating2, odleglosc):
+    if manhattan(rating1, rating2) == odleglosc:
+        return True
+    else:
+        return False
+
+def computeNearestNeighbor(imie, uzytkownicy):
+    """dla danego uzytkownika, zwraca liste innych uzytkownikow wedlug bliskosci preferencji"""
+    odleglosci = []
+    for imie2 in uzytkownicy:
+        odleglosc = 0
+        if imie!=imie2:
+            odleglosc = manhattan(uzytkownicy[imie], uzytkownicy[imie2])
+            odleglosci.append((odleglosc, imie2))
+    return sorted(odleglosci)
+
+#print(computeNearestNeighbor('Hela',users))
 
 def recommend(username, users):
-    """Zwróć listę rekomendacji dla użytkownika"""
-    # znajdź preferencje najbliższego sąsiada
-    nearest = computeNearestNeighbor(username, users)
-    
+    """Zwraca liste rekomendacji dla uzytkownika"""
+    # znajduje preferencje najblizszego sasiada
+    nearestName = computeNearestNeighbor(username, users)[0][1]
+    print username
+    print 'Najblizszy sasiad to: %s' %nearestName
     recommendations = []
-    # zarekomenduj użytkownikowi wykonawcę, którego jeszcze nie ocenił, a zrobił to jego najbliższy sąsiad
-    # TODO: wpisz kod
+    ratingOfNearest = users[nearestName]
+    print ('Rekomendacje to: ')
+    print (ratingOfNearest)
+    # Rekomenduje wykonawce, ktorego uzytkownik nie ocenil, a zrobil to jego najblizszy sasiad
+    userRating = users[username]
     
-    return sorted(recommendations, key=lambda artistTuple: artistTuple[1], reverse = True)
+    for artist in ratingOfNearest:
+        if not artist in userRating:
+            recommendations.append((artist, ratingOfNearest[artist]))
+        return sorted(recommendations, key=lambda artistTuple: artistTuple[1], reverse = True)
 
-# przykłady
-
-print( recommend('Hela', users))
-#print( recommend('Celina', users))
+#recommend('Hela', users)
+print(recommend('Hela', users))
